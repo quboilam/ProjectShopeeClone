@@ -11,11 +11,10 @@ import { ErrorResponse } from 'src/types/utils.type'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import Button from 'src/components/Button'
-
 type FormData = Schema
 
 export default function Register() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     register,
@@ -31,8 +30,9 @@ export default function Register() {
   const onSubmit = handleSubmit((data) => {
     const body = omit(data, ['confirm_password'])
     registerAccountMutation.mutate(body, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setIsAuthenticated(true)
+        setProfile(data.data.data.user)
         navigate('/')
       },
       onError: (error) => {
@@ -95,7 +95,6 @@ export default function Register() {
                 placeholder='Confirm Password'
                 autoComplete='on'
               />
-
               <div className='mt-2'>
                 <Button
                   className='w-full py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600 flex justify-center items-center'
